@@ -18,20 +18,15 @@ public class SistemaLogin {
         }
     }
 
-}
-
-    // AGORA A PARTE DO CADASTRO:
     public static boolean cadastrar(String usuario, String senha) {
         try (Connection con = Conexao.conectar()) {
             String sqlCheck = "SELECT 1 FROM usuarios WHERE usuario = ?";
             PreparedStatement st = con.prepareStatement(sqlCheck);
             st.setString(1, usuario);
-            ResultSet rs = st.executeQuery(); // Esta linha é obrigatória
+            ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 return false; // usuário já existe
             }
-
-            // INSERE NOVO USUÁRIO
             String sqlInsert = "INSERT INTO usuarios (usuario, senha) VALUES (?, ?)";
             st = con.prepareStatement(sqlInsert);
             st.setString(1, usuario);
@@ -43,5 +38,4 @@ public class SistemaLogin {
             return false;
         }
     }
-
 }

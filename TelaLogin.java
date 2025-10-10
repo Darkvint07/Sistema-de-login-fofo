@@ -1,44 +1,44 @@
-import javax.swing.*;
-import java.awt.event.*;
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import java.util.Properties;
 
-public class TelaLogin extends JFrame {
-    private JTextField txtUsuario = new JTextField(15);
-    private JPasswordField txtSenha = new JPasswordField(15);
-    private JButton btnEntrar = new JButton("Entrar");
-    private JButton btnCadastro = new JButton("Cadastrar");
+public class EnviarEmail {
 
-    public TelaLogin() {
-        setTitle("Tela de Login");
-        setLayout(new java.awt.FlowLayout());
-        add(new JLabel("Usuário:"));
-        add(txtUsuario);
-        add(new JLabel("Senha:"));
-        add(txtSenha);
-        add(btnEntrar);
-        add(btnCadastro);
+    public static void enviar(String mensagem) {
+        String to = "moreiraconegundesangelica@gmail.com";
+        String from = "moreiraconegundesangelica@gmail.com";
+        String password = "knhackqhchvarcwe"; // DICA: Coloque essas infos em variável de ambiente ou arquivo externo em
+                                              // sistemas reais!
 
-        btnEntrar.addActionListener(e -> {
-            String usuario = txtUsuario.getText();
-            String senha = new String(txtSenha.getPassword());
-            boolean aut = SistemaLogin.autenticar(usuario, senha);
-            if (aut) {
-                JOptionPane.showMessageDialog(this, "Login realizado com sucesso!");
-                EnviarEmail.enviar("Login realizado:\nUsuário: " + usuario);
-            } else {
-                JOptionPane.showMessageDialog(this, "Usuário ou senha inválidos.");
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(from, password);
             }
         });
-        btnCadastro.addActionListener(e -> {
-            new TelaCadastro(); // <-- ABRE A TELA DE CADASTRO
-        });
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 150);
-        setLocationRelativeTo(null);
-        setVisible(true);
-    }
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+            message.setSubject("Informação de Login");
+            message.setText(mensagem);
 
-    public static void main(String[] args) {
-        new TelaLogin();
+            Transport.send(message);
+            System.out.println("Email enviado.");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 }

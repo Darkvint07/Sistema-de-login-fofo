@@ -6,13 +6,23 @@ import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import java.io.FileInputStream;
 import java.util.Properties;
 
 public class EnviarEmail {
     public static void enviar(String mensagem) {
-        String to = "moreiraconegundesangelica@gmail.com";
-        String from = "moreiraconegundesangelica@gmail.com";
-        String password = "knhackqhchvarcwe";
+        Properties config = new Properties();
+        try {
+            config.load(new FileInputStream("config.properties"));
+        } catch (Exception e) {
+            System.out.println("Erro ao ler config.properties.");
+            e.printStackTrace();
+            return;
+        }
+
+        String to = config.getProperty("GMAIL_USER");
+        String from = config.getProperty("GMAIL_USER");
+        String password = config.getProperty("GMAIL_PASSWORD");
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -20,18 +30,16 @@ public class EnviarEmail {
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
 
-        Session session = Session.getInstance(props,
-                new Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(from, password);
-                    }
-                });
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(from, password);
+            }
+        });
 
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(from));
-            message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(to));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject("Informação de Login");
             message.setText(mensagem);
 

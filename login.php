@@ -1,6 +1,5 @@
 <?php
-include 'conexao.php'; // Conecta ao banco
-
+include 'conexao.php';
 $usuario = $_POST['usuario'];
 $senha = $_POST['senha'];
 
@@ -14,3 +13,4 @@ if ($result->num_rows > 0) {
 }
 $conn->close();
 ?>
+
