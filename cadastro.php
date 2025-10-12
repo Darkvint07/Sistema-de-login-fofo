@@ -1,20 +1,20 @@
 <?php
 include 'conexao.php';
 
-$usuario = $_POST['usuario'];
-$senha = $_POST['senha'];
-
-if(empty($usuario) || empty($senha)) {
-    echo "Preencha todos os campos!";
-    exit;
+if(isset($_POST['usuario']) && isset($_POST['senha'])){
+    $usuario = $_POST['usuario'];
+    $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+    
+    $sql = $conn->prepare("INSERT INTO usuarios (usuario, senha) VALUES (?, ?)");
+    $sql->bind_param("ss", $usuario, $senha);
+    
+    if($sql->execute()){
+        echo "Cadastro realizado com sucesso!";
+    } else {
+        echo "Erro: " . $conn->error;
+    }
+    $sql->close();
+    $conn->close();
 }
-
-$sql = "INSERT INTO usuarios (usuario, senha) VALUES ('$usuario','$senha')";
-if ($conn->query($sql) === TRUE) {
-    echo "Cadastro feito com sucesso!";
-} else {
-    echo "Erro: " . $conn->error;
-}
-$conn->close();
 ?>
 
