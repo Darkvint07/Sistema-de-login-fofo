@@ -1,7 +1,7 @@
 <?php
-$host = '127.0.0.1';
+$host = '';
 $user = 'root';
-$pass = '606312';
+$pass = '';
 $db   = 'sistema_login';
 
 $conn = new mysqli($host, $user, $pass, $db);
